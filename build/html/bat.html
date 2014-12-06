@@ -1,0 +1,524 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Bat analysis &mdash; Limbs Project Documentation 1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Limbs Project Documentation 1 documentation" href="index.html"/>
+        <link rel="next" title="Mouse, pig, and opossum analyzes" href="mousePigOpossum.html"/>
+        <link rel="prev" title="Overview" href="overview.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> Limbs Project Documentation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Bat analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#de-novo-transcriptome-assembly"><em>De novo</em> transcriptome assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gene-expression">Gene expression</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mousePigOpossum.html">Mouse, pig, and opossum analyzes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mousePigOpossum.html#alignment">Alignment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mousePigOpossum.html#gene-expression-and-fore-vs-hind-limbs-differences">Gene expression and fore vs hind limbs differences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mousePigOpossum.html#between-limbs-comparisons-at-diferent-stages-in-opossum">Between limbs comparisons at diferent stages in opossum</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="betweenSpecies.html">Between species analyzes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="betweenSpecies.html#determine-orthologous-genes">Determine orthologous genes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="betweenSpecies.html#conservation-of-gene-expression-across-species">Conservation of gene expression across species</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Limbs Project Documentation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Bat analysis</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/bat.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="bat-analysis">
+<span id="bat"></span><h1>Bat analysis<a class="headerlink" href="#bat-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="de-novo-transcriptome-assembly">
+<h2><em>De novo</em> transcriptome assembly<a class="headerlink" href="#de-novo-transcriptome-assembly" title="Permalink to this headline">¶</a></h2>
+<p>We pre-processed all <em>Carollia perspicillata</em>&#8216;s RNA-seq libraries to eliminate duplicates, adaptors, and low quality bases ( trimming qual&lt;20 at the reads&#8217; 3 prime end).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Illumina adaptors</span>
+<span class="c"># from page 6 on:</span>
+<span class="c"># http://supportres.illumina.com/documents/myillumina/6378de81-c0cc-47d0-9281-724878bb1c30/2012-09-18_illuminacustomersequenceletter.pdf</span>
+
+<span class="nb">declare</span> -A file_adaptor
+<span class="nv">file_adaptor</span><span class="o">=(</span>
+<span class="o">[</span>ACAGTG<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACACAGTGATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>CGATGT<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACCGATGTATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>CTTGTA<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACCTTGTAATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>GCCAAT<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACGCCAATATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>GTGAAA<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACGTGAAACGATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>CAGATC<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACCAGATCATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">)</span>
+<span class="nv">reads_raw</span><span class="o">=</span><span class="s2">&quot;/path/to/raw/fastq/folder&quot;</span>
+<span class="nv">reads_clean</span><span class="o">=</span><span class="s2">&quot;/path/to/outpu/folder&quot;</span>
+
+<span class="k">for </span>file in <span class="k">${</span><span class="nv">reads_raw</span><span class="k">}</span>/*; <span class="k">do</span>
+
+   <span class="c"># TRIMMS LOW QUALITIES</span>
+   <span class="nv">length</span><span class="o">=</span><span class="k">$((${#</span><span class="nv">reads_raw</span><span class="k">}</span><span class="o">+</span><span class="m">1</span><span class="k">))</span>
+   <span class="c">#file=${file:$length:(-8)}</span>
+   <span class="nv">file</span><span class="o">=</span><span class="k">${</span><span class="nv">file</span><span class="p">:</span><span class="nv">$length</span><span class="p">:(-6)</span><span class="k">}</span>
+
+   <span class="nb">echo</span> <span class="s2">&quot;Trimming &quot;</span><span class="k">${</span><span class="nv">file</span><span class="k">}</span><span class="s2">&quot; ==================================================&quot;</span>
+   fastq_quality_trimmer -Q 33 -v -t 20 -l 20 -i <span class="k">${</span><span class="nv">reads_raw</span><span class="k">}</span>/<span class="k">${</span><span class="nv">file</span><span class="k">}</span>.fastq -o <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.trimmed.fastq
+
+   <span class="c"># CLIPPS SEQUENCING ADAPTORS</span>
+   <span class="nv">sequence</span><span class="o">=</span><span class="k">$(</span>awk -v <span class="nv">x</span><span class="o">=</span><span class="nv">$file</span> <span class="s1">&#39;END{n=split(x,a,&quot;_&quot;);print a[n-3]}&#39;</span> /dev/null<span class="k">)</span>
+   <span class="nv">adaptor</span><span class="o">=</span><span class="k">${</span><span class="nv">file_adaptor</span><span class="p">[</span><span class="nv">$sequence</span><span class="p">]</span><span class="k">}</span>
+
+   <span class="nb">echo</span> <span class="s2">&quot;Clipping: &quot;</span><span class="k">${</span><span class="nv">file</span><span class="k">}</span> <span class="nv">$adaptor</span><span class="s2">&quot; ==================================================&quot;</span>
+   fastx_clipper -Q 33 -a <span class="k">${</span><span class="nv">adaptor</span><span class="k">}</span> -l 20 -n -v -i <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.trimmed.fastq -o <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.trimmed.clipped.fastq
+
+<span class="k">done</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption>Output cleaned RNA-seq libraries.</caption>
+<colgroup>
+<col width="4%" />
+<col width="96%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Library</th>
+<th class="head">Cleaned fastq files</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>13FL_L5</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/bat_2011_109_13HL_ACAGTG_L005_R1_001.trimmed.clipped.fastq">bat_2011_109_13HL_ACAGTG_L005_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-odd"><td>13HL_L7</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/bat_2013_105_13HL_CTTGTA_L007_R1_001.trimmed.clipped.fastq">bat_2013_105_13HL_CTTGTA_L007_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-even"><td>13FL_L4</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/Bat_2013_161_13FL_CGATGT_L004_R1_001.trimmed.clipped.fastq">Bat_2013_161_13FL_CGATGT_L004_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-odd"><td>13HL_L6</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/bat_2013_161_13HL_GCCAAT_L006_R1_001.trimmed.clipped.fastq">bat_2013_161_13HL_GCCAAT_L006_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-even"><td>13FL_L1</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St13FL162_CGATGT_L001_R1_001.trimmed.clipped.fastq">St13FL162_CGATGT_L001_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-odd"><td>13FL_L2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St13FL178_CGATGT_L002_R1_001.trimmed.clipped.fastq">St13FL178_CGATGT_L002_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-even"><td>14FL_L1</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14FL104_ACAGTG_L001_R1_001.trimmed.clipped.fastq">St14FL104_ACAGTG_L001_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-odd"><td>14FL_L2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14FL122_ACAGTG_L002_R1_001.trimmed.clipped.fastq">St14FL122_ACAGTG_L002_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-even"><td>14HL_L1</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14HL104_GCCAAT_L001_R1_001.trimmed.clipped.fastq">St14HL104_GCCAAT_L001_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-odd"><td>14HL_L2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14HL122_GCCAAT_L002_R1_001.trimmed.clipped.fastq">St14HL122_GCCAAT_L002_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-even"><td>15FL_L1</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15FL105_CTTGTA_L001_R1_001.trimmed.clipped.fastq">St15FL105_CTTGTA_L001_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-odd"><td>15FL_L2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15FL118_CTTGTA_L002_R1_001.trimmed.clipped.fastq">St15FL118_CTTGTA_L002_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-even"><td>15HL_L1</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15HL105_GTGAAA_L001_R1_001.trimmed.clipped.fastq">St15HL105_GTGAAA_L001_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+<tr class="row-odd"><td>15HL_L2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15HL118_GTGAAA_L002_R1_001.trimmed.clipped.fastq">St15HL118_GTGAAA_L002_R1_001.trimmed.clipped.fastq</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Library names follows the convention: ${stage}${limb}_${line}. For instance, library of stage 13 on forward limb, sequenced on line 5 is named: 13FL_L5</p>
+</div>
+<p>At first, we attempted to align the cleaned libraries against <em>Myotis lucifugus</em>, a closely-related bat species with a readily available genome sequence and gene annotation at ENSEMBL:</p>
+<div class="line-block">
+<div class="line"><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-71/fasta/myotis_lucifugus/dna/Myotis_lucifugus.Myoluc2.0.71.dna_sm.toplevel.fa.gz">myoLuc.fa</a></div>
+<div class="line"><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-71/gtf/myotis_lucifugus/Myotis_lucifugus.Myoluc2.0.71.gtf.gz">myoLuc.gtf</a></div>
+<div class="line"><br /></div>
+</div>
+<p>However, the mapping (using <a class="reference external" href="http://ccb.jhu.edu/software/tophat/">Tophat</a>) of libraries at stages 14 and 15 resulted in only ~9% alignment rates.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Index genome with Bowtie2</span>
+bowtie2-build myoLuc2.fa myoLuc2
+
+<span class="k">for </span>pathFile in *trimmed.clipped.fastq
+<span class="k">do</span>
+<span class="k">   </span><span class="nv">file</span><span class="o">=</span><span class="k">${</span><span class="nv">pathFile</span><span class="p">:</span><span class="nv">33</span><span class="p">:(-6)</span><span class="k">}</span>
+   <span class="nb">echo</span> <span class="k">${</span><span class="nv">file</span><span class="k">}</span><span class="s2">&quot;==================================================&quot;</span>
+   tophat -g 1 -p 10 --GTF myoLuc.gtf -o <span class="k">${</span><span class="nv">file</span><span class="k">}</span> myoLuc2 <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.fastq
+<span class="k">done</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption>Alignment rates against <em>Myotis lucifugus</em></caption>
+<colgroup>
+<col width="87%" />
+<col width="13%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Alignment file</th>
+<th class="head">Alignment rate (%)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14FL104_ACAGTG_L001_R1_001.trimmed.clipped_accepted_hits.bam">14FL_L1</a></td>
+<td>8.23</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14FL122_ACAGTG_L002_R1_001.trimmed.clipped_accepted_hits.bam">14FL_L2</a></td>
+<td>8.67</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14HL104_GCCAAT_L001_R1_001.trimmed.clipped_accepted_hits.bam">14HL_L1</a></td>
+<td>9.11</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St14HL122_GCCAAT_L002_R1_001.trimmed.clipped_accepted_hits.bam">14HL_L2</a></td>
+<td>9.00</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15FL105_CTTGTA_L001_R1_001.trimmed.clipped_accepted_hits.bam">15FL_L1</a></td>
+<td>7.72</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15FL118_CTTGTA_L002_R1_001.trimmed.clipped_accepted_hits.bam">15FL_L2</a></td>
+<td>7.99</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15HL105_GTGAAA_L001_R1_001.trimmed.clipped_accepted_hits.bam">15HL_L1</a></td>
+<td>8.69</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St15HL118_GTGAAA_L002_R1_001.trimmed.clipped_accepted_hits.bam">15HL_L2</a></td>
+<td>8.17</td>
+</tr>
+</tbody>
+</table>
+<p>As a result, we resorted to a <em>de novo</em> transcriptome assembly strategy. Here, the idea was to deduce <em>Carollia perspicillata</em> trancriptome by stitching together overlapping RNA-seq reads. To do so, we pooled all cleaned libraries into a single file, and removed duplicated sequences to reduce the computation footprint.</p>
+<p><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/St13_14_15.unique2.fastq">St13_14_15.unique2.fastq</a>.</p>
+<p>These reads were then assembled into transcripts using <a class="reference external" href="http://trinityrnaseq.sourceforge.net/">Trinity</a>.</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<p class="last"><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/Trinity.fasta">Trinity.fasta</a></p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ $TRINITY_HOME</span>/Trinity.pl <span class="se">\</span>
+   --seqType fq --JM 80G --single St13_14_15.unique2.fastq <span class="se">\</span>
+   --output /data2/rivasas2/limbs/trinity/bat/St13_14_15.unique.trinity <span class="se">\</span>
+   --CPU 12
+</pre></div>
+</div>
+<p>obtaining <strong>350,733</strong> gene transcripts.</p>
+<p>To eliminate spurious transcripts, we kept only those which sequences matched
+(<a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK52640/">blastx</a>)
+the protein sequences of the SwissProt database
+(<a class="reference external" href="http://sourceforge.net/projects/trinotate/files/TRINOTATE_RESOURCES/TrinotateResources-20130704/uniprot_sprot.fasta.gz">uniprot_sprot.fasta</a>).</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<p class="last"><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/blastx.outfmt6">blastx.outfmt6</a></p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>blastx -query Trinity.fasta <span class="se">\</span>
+   -db uniprot_sprot.fasta <span class="se">\</span>
+   -out blastx.outfmt6 -evalue 1e-20 -num_threads 10 -max_target_seqs 1 -outfmt 6
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<p>Only <strong>88,930</strong> found a match. We used this information to subset the transcriptome using <a class="reference external" href="http://samtools.sourceforge.net/">samtools</a>.</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<p class="last"><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/Trinity.subset.fasta">Trinity.subset.fasta</a></p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>cut -f1 blastx.outfmt6 &gt; isoforms_subset_names.txt
+<span class="nv">$ </span>samtools faidx Trinity.fasta
+<span class="nv">$ </span>xargs samtools faidx Trinity.fasta &lt; isoforms_subset_names.txt &gt; Trinity.subset.fasta
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<p>The final set of transcripts then was reduced to <strong>88,930</strong> sequences, which were used as references to map the RNA-seq libraries and compute gene expression.</p>
+</div>
+<div class="section" id="gene-expression">
+<h2>Gene expression<a class="headerlink" href="#gene-expression" title="Permalink to this headline">¶</a></h2>
+<p>We used <a class="reference external" href="http://deweylab.biostat.wisc.edu/rsem/">RSEM</a> to align the reads ( like <a class="reference external" href="http://ccb.jhu.edu/software/tophat/">Tophat</a>, this tool internally uses <cite>bowtie &lt;https://http://bowtie-bio.sourceforge.net/index.shtml&gt;</cite> ) and to compute the expression values.</p>
+<p>First, we used <a class="reference external" href="http://trinityrnaseq.sourceforge.net/">Trinity&#8217;s</a> script to extract the gene names from our reference transcriptome.</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<p class="last"><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/map_file.txt">map_file.txt</a></p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre>extract-transcript-to-gene-map-from-trinity Trinity.subset.fasta map_file.txt
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<p>At this point we were ready to run <a class="reference external" href="http://deweylab.biostat.wisc.edu/rsem/">RSEM</a> on our cleaned RNA-seq libraries. We didn&#8217;t remove duplicated reads from the libraries since they may be important when distinguishing differences in expression.</p>
+<div class="highlight-bash"><div class="highlight"><pre>rsem-prepare-reference <span class="se">\</span>
+   --transcript-to-gene-map map_file.txt <span class="se">\</span>
+   --quiet <span class="se">\</span>
+   Trinity.subset.fasta <span class="se">\</span>
+   reference_name.subset
+
+<span class="nb">declare</span> -A lanes
+lanes<span class="o">[</span><span class="s2">&quot;13_FL&quot;</span><span class="o">]=</span><span class="s2">&quot;L001 L002 L004&quot;</span>
+lanes<span class="o">[</span><span class="s2">&quot;13_HL&quot;</span><span class="o">]=</span><span class="s2">&quot;L005 L006 L007&quot;</span>
+lanes<span class="o">[</span><span class="s2">&quot;14_FL&quot;</span><span class="o">]=</span><span class="s2">&quot;L001 L002&quot;</span>
+lanes<span class="o">[</span><span class="s2">&quot;14_HL&quot;</span><span class="o">]=</span><span class="s2">&quot;L001 L002&quot;</span>
+lanes<span class="o">[</span><span class="s2">&quot;15_FL&quot;</span><span class="o">]=</span><span class="s2">&quot;L001 L002&quot;</span>
+lanes<span class="o">[</span><span class="s2">&quot;15_HL&quot;</span><span class="o">]=</span><span class="s2">&quot;L001 L002&quot;</span>
+
+<span class="k">for </span>sample in 13 14 15; <span class="k">do</span>
+<span class="k">for </span>limb in FL HL; <span class="k">do</span>
+<span class="k">for </span>lane in <span class="k">${</span><span class="nv">lanes</span><span class="p">[</span><span class="k">${</span><span class="nv">sample</span><span class="k">}</span><span class="nv">_</span><span class="k">${</span><span class="nv">limb</span><span class="k">}</span><span class="p">]</span><span class="k">}</span>; <span class="k">do</span>
+
+<span class="k">   for </span>file in <span class="k">$(</span>ls *clipped.fastq | grep <span class="nv">$sample</span> | grep <span class="nv">$limb</span> | grep <span class="nv">$lane</span> <span class="k">)</span>; <span class="k">do</span>
+
+<span class="k">       </span><span class="nb">echo</span> <span class="nv">$file</span> L<span class="k">${</span><span class="nv">lane</span><span class="p">:</span><span class="nv">3</span><span class="k">}</span> <span class="o">================================</span>
+
+       rsem-calculate-expression <span class="se">\</span>
+       -p 10 --fragment-length-mean 425.0 --fragment-length-sd 150.0 --quiet <span class="se">\</span>
+       --calc-ci <span class="se">\</span>
+       <span class="k">${</span><span class="nv">file</span><span class="k">}</span> <span class="se">\</span>
+       reference_name.subset <span class="se">\</span>
+       <span class="k">${</span><span class="nv">sample</span><span class="k">}${</span><span class="nv">limb</span><span class="k">}</span>_L<span class="k">${</span><span class="nv">lane</span><span class="p">:</span><span class="nv">3</span><span class="k">}</span>.RSEM &gt; <span class="k">${</span><span class="nv">sample</span><span class="k">}${</span><span class="nv">limb</span><span class="k">}</span>_L<span class="k">${</span><span class="nv">lane</span><span class="p">:</span><span class="nv">3</span><span class="k">}</span>.RSEM.log 2&gt;&amp;1
+
+   <span class="k">done</span>
+
+<span class="k">done</span>; <span class="k">done</span>; <span class="k">done</span>
+</pre></div>
+</div>
+<table border="1" class="docutils" id="alignment-rates-denovo-table">
+<caption>Aligned cleaned RNAA-seq against <em>de novo</em> transcriptome, and expression at gene and transcripts levels</caption>
+<colgroup>
+<col width="31%" />
+<col width="6%" />
+<col width="31%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Alignment file</th>
+<th class="head">Alignment rate(%)</th>
+<th class="head">Gene level expression</th>
+<th class="head">Transcript level expression</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L1.RSEM.transcript.sorted.bam">13FL_L1</a></td>
+<td>82.7</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L1.RSEM.isoforms.results">13FL_L1_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L1.RSEM.isoforms.results">13FL_L1_isoform</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L2.RSEM.transcript.sorted.bam">13FL_L2</a></td>
+<td>83.8</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L2.RSEM.isoforms.results">13FL_L2_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L2.RSEM.isoforms.results">13FL_L2_isoform</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L4.RSEM.transcript.sorted.bam">13FL_L4</a></td>
+<td>82.5</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L4.RSEM.isoforms.results">13FL_L4_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L4.RSEM.isoforms.results">13FL_L4_isoform</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13HL_L5.RSEM.transcript.sorted.bam">13HL_L5</a></td>
+<td>81.9</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L4.RSEM.isoforms.results">13FL_L4_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13FL_L4.RSEM.isoforms.results">13FL_L4_isoform</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13HL_L6.RSEM.transcript.sorted.bam">13HL_L6</a></td>
+<td>85.6</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13HL_L6.RSEM.isoforms.results">13HL_L6_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13HL_L6.RSEM.isoforms.results">13HL_L6_isoform</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13HL_L7.RSEM.transcript.sorted.bam">13HL_L7</a></td>
+<td>80.8</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13HL_L7.RSEM.isoforms.results">13HL_L7_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/13HL_L7.RSEM.isoforms.results">13HL_L7_isoform</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14FL_L1.RSEM.transcript.sorted.bam">14FL_L1</a></td>
+<td>78.6</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14FL_L1.RSEM.isoforms.results">14FL_L1_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14FL_L1.RSEM.isoforms.results">14FL_L1_isoform</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14FL_L2.RSEM.transcript.sorted.bam">14FL_L2</a></td>
+<td>80.5</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14FL_L2.RSEM.isoforms.results">14FL_L2_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14FL_L2.RSEM.isoforms.results">14FL_L2_isoform</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14HL_L1.RSEM.transcript.sorted.bam">14HL_L1</a></td>
+<td>80.3</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14HL_L1.RSEM.isoforms.results">14HL_L1_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14HL_L1.RSEM.isoforms.results">14HL_L1_isoform</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14HL_L2.RSEM.transcript.sorted.bam">14HL_L2</a></td>
+<td>80.1</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14HL_L2.RSEM.isoforms.results">14HL_L2_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/14HL_L2.RSEM.isoforms.results">14HL_L2_isoform</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15FL_L1.RSEM.transcript.sorted.bam">15FL_L1</a></td>
+<td>76.6</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15FL_L1.RSEM.isoforms.results">15FL_L1_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15FL_L1.RSEM.isoforms.results">15FL_L1_isoform</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15FL_L2.RSEM.transcript.sorted.bam">15FL_L2</a></td>
+<td>77.3</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15FL_L2.RSEM.isoforms.results">15FL_L2_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15FL_L2.RSEM.isoforms.results">15FL_L2_isoform</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15HL_L1.RSEM.transcript.sorted.bam">15HL_L1</a></td>
+<td>79.2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15HL_L1.RSEM.isoforms.results">15HL_L1_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15HL_L1.RSEM.isoforms.results">15HL_L1_isoform</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15HL_L2.RSEM.transcript.sorted.bam">15HL_L2</a></td>
+<td>79.2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15HL_L2.RSEM.isoforms.results">15HL_L2_gene</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/15HL_L2.RSEM.isoforms.results">15HL_L2_isoform</a></td>
+</tr>
+</tbody>
+</table>
+<p>From the alignment rate column it can be seen that the <em>de novo</em> assembly improved the mapping in one order of magnitud.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mousePigOpossum.html" class="btn btn-neutral float-right" title="Mouse, pig, and opossum analyzes"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="overview.html" class="btn btn-neutral" title="Overview"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Marcelo Rivas-Astroza.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

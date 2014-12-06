@@ -1,0 +1,511 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Between species analyzes &mdash; Limbs Project Documentation 1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Limbs Project Documentation 1 documentation" href="index.html"/>
+        <link rel="prev" title="Mouse, pig, and opossum analyzes" href="mousePigOpossum.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> Limbs Project Documentation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bat.html">Bat analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bat.html#de-novo-transcriptome-assembly"><em>De novo</em> transcriptome assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bat.html#gene-expression">Gene expression</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mousePigOpossum.html">Mouse, pig, and opossum analyzes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mousePigOpossum.html#alignment">Alignment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mousePigOpossum.html#gene-expression-and-fore-vs-hind-limbs-differences">Gene expression and fore vs hind limbs differences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mousePigOpossum.html#between-limbs-comparisons-at-diferent-stages-in-opossum">Between limbs comparisons at diferent stages in opossum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Between species analyzes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#determine-orthologous-genes">Determine orthologous genes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conservation-of-gene-expression-across-species">Conservation of gene expression across species</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Limbs Project Documentation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Between species analyzes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/betweenSpecies.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="between-species-analyzes">
+<span id="betweenspecies"></span><h1>Between species analyzes<a class="headerlink" href="#between-species-analyzes" title="Permalink to this headline">¶</a></h1>
+<p>In this chapter, we analyzed the gene expression differences between species across development. The pipeline is divided into two big tasks. The first, is to determine the orthologs genes between all four species. Then, to determine the set of genes with the most divergent/conserved expression profiles among species.</p>
+<div class="section" id="determine-orthologous-genes">
+<h2>Determine orthologous genes<a class="headerlink" href="#determine-orthologous-genes" title="Permalink to this headline">¶</a></h2>
+<p>First, we got the DNA sequences (fasta format) of mouse, opossum, and pig from <a class="reference external" href="https://www.ensembl.org/biomart">ENSEMBL</a>, using Perl scrips:
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/mouse.pl">mouse.pl</a>,
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/opossum.pl">opossum.pl</a>, and
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/pig.pl">pig.pl</a></p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<div class="last line-block">
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/mouse.genes.fasta">mouse.genes.fasta</a></div>
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/opossum.genes.fasta">opossum.genes.fasta</a></div>
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/pig.genes.fasta">pig.genes.fasta</a></div>
+</div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c">#############################</span>
+<span class="c"># Get FASTA sequence of genes</span>
+<span class="c">#############################</span>
+
+<span class="k">for </span>specie in mouse opossum pig; <span class="k">do</span>
+<span class="k">   </span>perl <span class="nv">$specie</span>.pl &gt; <span class="nv">$specie</span>.genes.fasta
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>Then, using bat&#8217;s transcriptome as reference
+(<a class="reference external" href="https://132.239.135.28/public/limbs/files/bat/Trinity.subset.fasta">Trinity.subset.fasta</a>)
+we aligned (blastn, E-value 1e-20), one by one, the transcriptomes of mouse, opossum, and pig
+.</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<div class="last line-block">
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/mouse.blastn.outfmt6">mouse.blastn.outfmt6</a></div>
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/opossum.blastn.outfmt6">opossum.blastn.outfmt6</a></div>
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/pig.blastn.outfmt6">pig.blastn.outfmt6</a></div>
+</div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c">#######################################</span>
+<span class="c"># Blast BAT genes against other species</span>
+<span class="c">#######################################</span>
+
+<span class="k">for </span>specie in mouse opossum pig; <span class="k">do</span>
+<span class="k">   </span><span class="nb">echo </span>makdeblastdb <span class="nv">$species</span> <span class="o">=====================</span>
+   makeblastdb -in <span class="nv">$specie</span>.genes.fasta -dbtype nucl
+   <span class="nb">echo </span>blastn bat-<span class="nv">$specie</span> ------------------------
+   blastn <span class="se">\</span>
+       -query Trinity.subset.fasta <span class="se">\</span>
+       -db <span class="nv">$specie</span>.genes.fasta <span class="se">\</span>
+       -out <span class="nv">$specie</span>.blastn.outfmt6 <span class="se">\</span>
+       -evalue 1e-20 <span class="se">\</span>
+       -num_threads 10 <span class="se">\</span>
+       -max_target_seqs 1 <span class="se">\</span>
+       -outfmt 6
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>To reduce ambiguity, we filter out bat genes matching more than one orthologs gene in any other species. We extracted the gene-id columns (1 and 2) of the output files of blastn,</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<p class="last"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/bat_mouse.orthologs.txt">bat_mouse.orthologs.txt</a>
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/bat_opossum.orthologs.txt">bat_opossum.orthologs.txt</a>
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/bat_pig.orthologs.txt">bat_pig..orthologs.txt</a></p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c">############################################</span>
+<span class="c"># Filter out the BAT genes with</span>
+<span class="c"># isoforms matching different ortholog genes</span>
+<span class="c">############################################</span>
+
+<span class="k">for </span>specie in mouse opossum pig; <span class="k">do</span>
+
+<span class="k">   </span><span class="nb">echo</span> <span class="nv">$specie</span> <span class="o">============================</span>
+
+   awk <span class="s1">&#39;BEGIN{FS=OFS=&quot;\t&quot;} {</span>
+<span class="s1">          split($1,a,&quot;_seq&quot;)</span>
+<span class="s1">              print a[1],$2}&#39;</span> <span class="k">${</span><span class="nv">specie</span><span class="k">}</span>.blastn.outfmt6 <span class="se">\</span>
+              | sort -u -k1,1 <span class="se">\</span>
+              | awk <span class="s1">&#39;BEGIN{FS=OFS=&quot;\t&quot;} {</span>
+<span class="s1">                 split($2,a,&quot;|&quot;)</span>
+<span class="s1">                     print $1,a[1]}&#39;</span> &gt; bat_<span class="k">${</span><span class="nv">specie</span><span class="k">}</span>.orthologs.txt
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>removed duplicates,</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<p class="last"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/bat_mouse.orthologs.uniq.txt">bat_mouse.orthologs.uniq.txt</a>
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/bat_opossum.orthologs.uniq.txt">bat_opossum.orthologs.uniq.txt</a>
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/bat_pig.orthologs.uniq.txt">bat_pig..orthologs.uniq.txt</a></p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c">#######################################</span>
+<span class="c"># Remove non-unique bat-species matches</span>
+<span class="c">#######################################</span>
+
+<span class="k">for </span>specie in mouse opossum pig; <span class="k">do</span>
+<span class="k">   </span>sort -k2 bat_<span class="k">${</span><span class="nv">species</span><span class="k">}</span>.orthologs.txt <span class="se">\</span>
+       | uniq -f1 -u <span class="se">\</span>
+       &gt; bat_<span class="k">${</span><span class="nv">species</span><span class="k">}</span>.orthologs.uniq.txt
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>and finally, we used a python script
+<a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/getAllOrthologs2.py">(getAllOrthologs2.py)</a>
+to determine the bat genes that have orthologs sequences in all the other three species.</p>
+<div class="sidebar">
+<p class="first sidebar-title">Output</p>
+<p class="last"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/all.orthologs.uniq.txt">all.orthologs.uniq.txt</a></p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c">###############################################################</span>
+<span class="c"># Find bat genes with orthologous genes in all the other species</span>
+<span class="c">################################################################</span>
+
+python getAllOrthologs2.py &gt; all.orthologs.uniq.txt
+</pre></div>
+</div>
+</div>
+<div class="section" id="conservation-of-gene-expression-across-species">
+<h2>Conservation of gene expression across species<a class="headerlink" href="#conservation-of-gene-expression-across-species" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="experimental-settings-and-conservation-metric">
+<h3>Experimental settings and conservation metric<a class="headerlink" href="#experimental-settings-and-conservation-metric" title="Permalink to this headline">¶</a></h3>
+<p>We analyzed how conserved are the gene expression profiles of bat, mouse, opossum, and pig across embryonic limb development on three experimental settings (see Tables 1, and 2).</p>
+<div class="sidebar">
+<p class="first sidebar-title">Table 1: Experimental settings.</p>
+<p class="last">The settings 1 and 2 comprehend all species ( bat, mouse,  opossum, and pig) but only at stages 3-4, and 6 since we don&#8217;t have gene expression data for  pig at stage 2. Excluding pig from the analysis but including stage 2, we defined  experimental setting 3.</p>
+</div>
+<blockquote id="table-settings">
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="26%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="2">Stage</th>
+<th class="head" colspan="3">Experimental settings</th>
+</tr>
+<tr class="row-even"><th class="head"><div class="first last line-block">
+<div class="line">1. Forward Limbs:</div>
+<div class="line">all species</div>
+</div>
+</th>
+<th class="head"><div class="first last line-block">
+<div class="line">2. Hind Limbs:</div>
+<div class="line">all species</div>
+</div>
+</th>
+<th class="head"><div class="first last line-block">
+<div class="line">3. Hind Limbs:</div>
+<div class="line">all species but pig</div>
+</div>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td>W2</td>
+<td>no</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+<tr class="row-even"><td>W3-4</td>
+<td>yes</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-odd"><td>W6</td>
+<td>yes</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<div class="sidebar">
+<p class="first sidebar-title">Table 2: Equivalent stages between species.</p>
+<p class="last">As in opossum fore and hind limbs have different stage correspondances, equivalente stages are presetned as type of limb: fore-lim (hind-limbs).</p>
+</div>
+<blockquote id="table-correspondance">
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="16%" />
+<col width="42%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Mouse</th>
+<th class="head">Bat</th>
+<th class="head">Opossum*</th>
+<th class="head">Pig</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>W2</td>
+<td>NA</td>
+<td>NA (30)</td>
+<td>NA</td>
+</tr>
+<tr class="row-odd"><td>W3_4</td>
+<td>14</td>
+<td>28 (31)</td>
+<td>22</td>
+</tr>
+<tr class="row-even"><td>W6</td>
+<td>15</td>
+<td>29 (32)</td>
+<td>26</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<p>To quantify conservation at each development stage, we use the mean of all species pairwise Spearman coefficients ( <img class="math" src="_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9ed04cc.png" alt="c"/> ):</p>
+<div class="math">
+<p><img src="_images/math/8667566ba11f5c19d0c4911cbeca3c81408eeb0c.png" alt="c = \frac{ 1 }{ \binom{n}{k} } \sum_{i=1}^{k-1} \sum_{j&gt;i}^{k} r_{i,j}"/></p>
+</div><p>Where <img class="math" src="_images/math/0544e0bae94d762ce0f61ee5692c2f47d352a964.png" alt="r_{i,j}"/> is the Spearman coefficient between species <img class="math" src="_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/> and <img class="math" src="_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j"/> at a given stage, and <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> is the total number of species under study in a particular experimental setting (3 for setting 1 and 2, and 4 for setting 3). We selected Spearman rather than Pearson coefficient, as the former is robust against out-layers.</p>
+</div>
+<div class="section" id="results">
+<h3>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h3>
+<p>In what follows, all analyzes were done using <a class="reference external" href="http://www.r-project.org/">R</a>, a free, open-source, data-analysis software. The R scripts for experimental setting 1, 2, and 3 can be download here:</p>
+<div class="line-block">
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/analysis.all.34_6.FL.R">analysis.all.34_6.FL.R</a></div>
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/analysis.all.34_6.HL.R">analysis.all.34_6.HL.R</a></div>
+<div class="line"><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/analysis.noPig.2_6.HL.R">analysis.noPig.2_6.HL.R</a></div>
+<div class="line"><br /></div>
+</div>
+<div class="section" id="normalization-and-scaling-of-the-rna-seq-libraries">
+<h4>Normalization and scaling of the RNA-seq libraries<a class="headerlink" href="#normalization-and-scaling-of-the-rna-seq-libraries" title="Permalink to this headline">¶</a></h4>
+<p>The gene expression values of each RNA-seq library were normalized by gene length and library size as described previously. Then for each stage and experimental settings, were scaled the libraries using the <a class="reference external" href="http://genomebiology.com/2010/11/10/r106">DESeq</a> method ( see <a class="reference internal" href="#figure-1">Figure 1</a>).</p>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/raw.allFL.svg" id="figure-1"><img id="figure-1" src="https://132.239.135.28/public/limbs/files/betweenSpecies/raw.allFL.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/raw.allHL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/raw.allHL.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/raw.noPig.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/raw.noPig.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/normalized.allFL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/normalized.allFL.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/normalized.allHL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/normalized.allHL.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/normalized.noPig.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/normalized.noPig.svg" width="30%" /></a>
+<p>Figure 1: Normalization and scaling of RNA-seq libraries. Gene expression was normalized by gene length and library size (first row). Then libraries were scaled to reduce between library variance using DESeq method (second row). Columns 1, 2, and 3 correspond to experiment settings 1, 2, and 3, respectively. FL: fore limbs; HL: hind limbs; b_: bat; m_: mouse; o_: opposum; p_: pig</p>
+</div>
+<div class="section" id="conservation-of-gene-expression-profiles">
+<h4>Conservation of gene expression profiles<a class="headerlink" href="#conservation-of-gene-expression-profiles" title="Permalink to this headline">¶</a></h4>
+<p>Based on 6,583 orthologous (that are  common to all 4 species), we use equation (1) to measure between-species gene expression  conservation at each developmental stage. All pairwise Spearman coefficients are presented  on Figure 2, where it can be seen that all species are positively correlated ( all Spearman  coefficients were above 0.5 ). On experimental settings 1 and 2, the conservation level  (Figure 3A, and 3B) decreases from stages 3-4 to 6, and the same tendency is observed on  experimental setting 3, where there is a constant decrease in conservation from stage 2 to 6  (Figure 3C).   To estimate how robust this conservation measurements are against different sets or  orthologous genes, we created gene subsamples with sizes ranging from 50 to 100% of all  orthologous genes (Figure 3). For each sample size, we measured conservation on 500 sets  of genes randomly selected. Based on the resulting distributions (shown as boxplots on  Figure 3) it can be observed that for experimental setting 3, only 70% of the genes are  necessary to find a statistically significant difference between conservation levels 2 and 3-4  (not overlapping 95% confidence intervals; Figure 3C). However on all experimental settings,  the conservation differences between stages 3-4 and 6 were highly dependent on the chosen  genes. In this cases, using 90% or less orthologous genes produces not significant  conservation differences between stages (the 95% confidence intervals overlap in all cases;  Figures 3A, 3B, and 3C).</p>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap34.allFL.svg" id="figure-2"><img id="figure-2" src="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap34.allFL.svg" width="40%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap6.allFL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap6.allFL.svg" width="40%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap34.allHL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap34.allHL.svg" width="40%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap6.allHL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap6.allHL.svg" width="40%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap2.noPig.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap2.noPig.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap34.noPig.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap34.noPig.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap6.noPig.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/heatmap6.noPig.svg" width="30%" /></a>
+<p>Figure 2: Pairwise Spearman coefficients values. Rows a, b, and c correspond to   experimental settings 1, 2, and 3. FL: fore limbs; HL: hind limbs; b_: bat; m_: mouse; o_:   opposum; p_: pig</p>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergency.allFL.svg" id="figure-3"><img id="figure-3" src="https://132.239.135.28/public/limbs/files/betweenSpecies/divergency.allFL.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergency.allHL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/divergency.allHL.svg" width="30%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergency.noPig.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/divergency.noPig.svg" width="30%" /></a>
+<p>Figure 3: Conservation of gene expression between species. Figures A, B, and C correspond to experimental settings 1, 2, and 3 respectively. FL: fore limbs; HL: hind limbs.</p>
+</div>
+</div>
+<div class="section" id="discussion">
+<h3>Discussion<a class="headerlink" href="#discussion" title="Permalink to this headline">¶</a></h3>
+<p>We found that gene expression conservation between bat, mouse, and opossum decreases   from stage 2 to 6. This trend is the opposite of the one observed for morphological   conservation at equivalent limb developmental stages ( species: mouse, opossum, pig, and   horse; Ross et al., 2013). This lack of correlation between genetic and morphological   conservation patterns may spring from the fact that we only used orthologous genes in our   analysis. We hypothesized that between-species morphological differences may be driven by   genes that have been under the influence of divergent selective pressures on bat, mouse,   and opossum and therefore unlikely to be orthologous</p>
+</div>
+<div class="section" id="list-of-divergent-and-conserved-genes">
+<h3>List of divergent and conserved genes<a class="headerlink" href="#list-of-divergent-and-conserved-genes" title="Permalink to this headline">¶</a></h3>
+<p>List of those genes that are conserved (or are different) among species at the different stages</p>
+<p>I&#8217;ve cluster the orthologous genes according to their cross-species standard deviation (SD). High cross-species SD means that a gene is divergent across species, and low SD that the gene is conserved.</p>
+<p>I&#8217;m attaching lists with the lowest SD (lower than 5% and 25% quantiles ) and greatest SD (greater than 75% and %95 quantiles) for all three scenarios: FL, HL, and noPig (HL but without pig species).</p>
+<p>The first columns of each list are the gene ID of each species, followed by their expression values, and with the last column containing the cross-species SD. The distributions figures of the SD for each scenario are presented in Figure 4.</p>
+<table border="1" class="docutils" id="table-analyzes">
+<caption>Conserved and divergent list of genes across species</caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Conserved</th>
+<th class="head">Divergent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_FL_early25%25.txt">conserved_FL_early25%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_FL_early75%25.txt">divergent_FL_early75%</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_FL_early5%25.txt">conserved_FL_early5%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_FL_early95%25.txt">divergent_FL_early95%</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_FL_late25%25.txt">conserved_FL_late25%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_FL_late75%25.txt">divergent_FL_late75%</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_FL_late5%25.txt">conserved_FL_late5%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_FL_late95%25.txt">divergent_FL_late95%</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_HL_early25%25.txt">conserved_HL_early25%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_HL_early75%25.txt">divergent_HL_early75%</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_HL_early5%25.txt">conserved_HL_early5%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_HL_early95%25.txt">divergent_HL_early95%</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_HL_late25%25.txt">conserved_HL_late25%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_HL_late75%25.txt">divergent_HL_late75%</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_HL_late5%25.txt">conserved_HL_late5%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_HL_late95%25.txt">divergent_HL_late95%</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_noPig_beginning25%25.txt">conserved_noPig_beginning25%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_noPig_beginning75%25.txt">divergent_noPig_beginning75%</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_noPig_beginning5%25.txt">conserved_noPig_beginning5%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_noPig_beginning95%25.txt">divergent_noPig_beginning95%</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_noPig_early25%25.txt">conserved_noPig_early25%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_noPig_early75%25.txt">divergent_noPig_early75%</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_noPig_early5%25.txt">conserved_noPig_early5%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_noPig_early95%25.txt">divergent_noPig_early95%</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_noPig_late25%25.txt">conserved_noPig_late25%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_noPig_late75%25.txt">divergent_noPig_late75%</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/conserved_noPig_late5%25.txt">conserved_noPig_late5%</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/betweenSpecies/divergent_noPig_late95%25.txt">divergent_noPig_late95%</a></td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/sd_distributions_FL.svg" id="figure-4"><img id="figure-4" src="https://132.239.135.28/public/limbs/files/betweenSpecies/sd_distributions_FL.svg" width="70%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/sd_distributions_HL.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/sd_distributions_HL.svg" width="70%" /></a>
+<a class="reference internal image-reference" href="https://132.239.135.28/public/limbs/files/betweenSpecies/sd_distributions_noPig.svg"><img src="https://132.239.135.28/public/limbs/files/betweenSpecies/sd_distributions_noPig.svg" width="90%" /></a>
+<p>Figure 4: Distribution of standard deviation. Rows 1, 2, and 3 correspond to experimental settings 1, 2, and 3 respectively. FL: fore limbs; HL: hind limbs.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="mousePigOpossum.html" class="btn btn-neutral" title="Mouse, pig, and opossum analyzes"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Marcelo Rivas-Astroza.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

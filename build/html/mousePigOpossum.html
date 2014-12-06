@@ -1,0 +1,761 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Mouse, pig, and opossum analyzes &mdash; Limbs Project Documentation 1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Limbs Project Documentation 1 documentation" href="index.html"/>
+        <link rel="next" title="Between species analyzes" href="betweenSpecies.html"/>
+        <link rel="prev" title="Bat analysis" href="bat.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> Limbs Project Documentation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bat.html">Bat analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bat.html#de-novo-transcriptome-assembly"><em>De novo</em> transcriptome assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bat.html#gene-expression">Gene expression</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Mouse, pig, and opossum analyzes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#alignment">Alignment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gene-expression-and-fore-vs-hind-limbs-differences">Gene expression and fore vs hind limbs differences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#between-limbs-comparisons-at-diferent-stages-in-opossum">Between limbs comparisons at diferent stages in opossum</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="betweenSpecies.html">Between species analyzes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="betweenSpecies.html#determine-orthologous-genes">Determine orthologous genes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="betweenSpecies.html#conservation-of-gene-expression-across-species">Conservation of gene expression across species</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Limbs Project Documentation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Mouse, pig, and opossum analyzes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/mousePigOpossum.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="mouse-pig-and-opossum-analyzes">
+<h1>Mouse, pig, and opossum analyzes<a class="headerlink" href="#mouse-pig-and-opossum-analyzes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="alignment">
+<h2>Alignment<a class="headerlink" href="#alignment" title="Permalink to this headline">¶</a></h2>
+<p>As with bat, the first step was to pre-processed all RNA-seq libraries (from mouse, pig, and opossum) to eliminate duplicates, adaptors, and low quality bases ( trimming qual&lt;20 at the reads’ 3 prime end).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Illumina adaptors</span>
+<span class="c"># from page 6 on:</span>
+<span class="c"># http://supportres.illumina.com/documents/myillumina/6378de81-c0cc-47d0-9281-724878bb1c30/2012-09-18_illuminacustomersequenceletter.pdf</span>
+<span class="nb">declare</span> -A file_adaptor
+<span class="nv">file_adaptor</span><span class="o">=(</span>
+<span class="o">[</span>ACAGTG<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACACAGTGATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>CGATGT<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACCGATGTATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>CTTGTA<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACCTTGTAATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>GCCAAT<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACGCCAATATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>GTGAAA<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACGTGAAACGATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">[</span>CAGATC<span class="o">]=</span>GATCGGAAGAGCACACGTCTGAACTCCAGTCACCAGATCATCTCGTATGCCGTCTTCTGCTTG
+<span class="o">)</span>
+
+<span class="k">for </span>file in <span class="k">${</span><span class="nv">reads_raw</span><span class="k">}</span>/*.fastq; <span class="k">do</span>
+<span class="k">   </span><span class="nv">length</span><span class="o">=</span><span class="k">$((${#</span><span class="nv">reads_raw</span><span class="k">}</span><span class="o">+</span><span class="m">1</span><span class="k">))</span>
+   <span class="nv">file</span><span class="o">=</span><span class="k">${</span><span class="nv">file</span><span class="p">:</span><span class="nv">$length</span><span class="p">:(-6)</span><span class="k">}</span>
+   <span class="c"># TRIMMS LOW QUALITIES</span>
+   <span class="nb">echo</span> <span class="s2">&quot;Trimming &quot;</span><span class="k">${</span><span class="nv">file</span><span class="k">}</span><span class="s2">&quot; ==================================================&quot;</span>
+   fastq_quality_trimmer -Q 33 -v -t 20 -l 20 -i <span class="k">${</span><span class="nv">reads_raw</span><span class="k">}</span>/<span class="k">${</span><span class="nv">file</span><span class="k">}</span>.fastq -o <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.trimmed.fastq
+   <span class="c"># CLIPPS SEQUENCING ADAPTORS</span>
+   <span class="nv">sequence</span><span class="o">=</span><span class="k">$(</span>awk -v <span class="nv">x</span><span class="o">=</span><span class="nv">$file</span> <span class="s1">&#39;END{n=split(x,a,&quot;_&quot;);print a[n-3]}&#39;</span> /dev/null<span class="k">)</span>
+   <span class="nv">adaptor</span><span class="o">=</span><span class="k">${</span><span class="nv">file_adaptor</span><span class="p">[</span><span class="nv">$sequence</span><span class="p">]</span><span class="k">}</span>
+   <span class="nb">echo</span> <span class="s2">&quot;Clipping: &quot;</span><span class="k">${</span><span class="nv">file</span><span class="k">}</span><span class="s2">&quot; ==================================================&quot;</span>
+   fastx_clipper -Q 33 -a <span class="k">${</span><span class="nv">adaptor</span><span class="k">}</span> -l 20 -n -v -i <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.trimmed.fastq -o <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.trimmed.clipped.fastq
+<span class="k">done</span>
+<span class="nb">cd</span> <span class="nv">$base</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption><strong>Output:</strong> Cleaned fastq libraries.</caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Mouse</th>
+<th class="head">Opossum</th>
+<th class="head">Pig</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_FL_1_2_CGATGT_L002_R1_001.trimmed.clipped.fastq.gz">W2FL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St28_FL3_GCCAAT_L002_R1_001.trimmed.clipped.fastq">28FL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_21half_22half_FL_CGATGT_L007_R1_001.trimmed.clipped.fastq.gz">21FL_L7</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_FL3_4_ACAGTG_L003_R1_001.trimmed.clipped.fastq.gz">W2FL_L3</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St28_FL1_CGATGT_L004_R1_001.trimmed.clipped.fastq">28FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_21half_22half_HL_ACAGTG_L004_R1_001.trimmed.clipped.fastq.gz">21HL_L4</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_FL_GCCAAT_L004_R1_001.trimmed.clipped.fastq.gz">W2FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St28_FL3_GCCAAT_L004_R1_001.trimmed.clipped.fastq">28FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_25half_26half_FL_GCCAAT_L005_R1_001.trimmed.clipped.fastq.gz">25FL_L5</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W2_HL3R_CGATGT_L005_R1_001.trimmed.clipped.fastq.gz">W2HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St28_FL2_ACAGTG_L005_R1_001.trimmed.clipped.fastq">28FL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_25half_26half_HL_CTTGTA_L006_R1_001.trimmed.clipped.fastq.gz">25HL_L6</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_HL1_2_CTTGTA_L005_R1_001.trimmed.clipped.fastq.gz">W2HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St28_FL1_CGATGT_L006_R1_001.trimmed.clipped.fastq">28FL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W3_4_FL3_GTGAAA_L002_R1_001.trimmed.clipped.fastq.gz">W3_4FL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St28_FL2_ACAGTG_L007_R1_001.trimmed.clipped.fastq">28FL_L7</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W3_4_FL2R_ACAGTG_L006_R1_001.trimmed.clipped.fastq.gz">W3_4FL_L6</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St29_Control_FL_index19_GTGAAA_L001_R1_001.trimmed.clipped.fastq">29FL_L1</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W3_4_HL2_GCCAAT_L003_R1_001.trimmed.clipped.fastq.gz">W3_4HL_L3</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St29_Control_FL_index2_CGATGT_L001_R1_001.trimmed.clipped.fastq">29FL_L1</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W3_4_HL3R_CTTGTA_L004_R1_001.trimmed.clipped.fastq.gz">W3_4HL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St29_Control_FL_index7_CAGATC_L001_R1_001.trimmed.clipped.fastq">29FL_L1</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W3_4_HL1R_GCCAAT_L007_R1_001.trimmed.clipped.fastq.gz">W3_4HL_L7</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St30FLControl1_GCCAAT_L004_R1_001.trimmed.clipped.fastq.gz">30FL_L4</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mouse_W6_FL2_CGATGT_L001_R1_001.trimmed.clipped.fastq.gz">W6FL_L1</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St30FLControl2_GCCAAT_L005_R1_001.trimmed.clipped.fastq.gz">30FL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_FL1_CGATGT_L003_R1_001.trimmed.clipped.fastq.gz">W6FL_L3</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St30FLControl3_GCCAAT_L006_R1_001.trimmed.clipped.fastq.gz">30FL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_FL3_ACAGTG_L004_R1_001.trimmed.clipped.fastq.gz">W6FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St30_HL3_4_GTGAAA_L003_R1_001.trimmed.clipped.fastq.gz">30HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mouse_W6_HL1_GTGAAA_L001_R1_001.trimmed.clipped.fastq.gz">W6HL_L1</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St30_HL1R_CTTGTA_L005_R1_001.trimmed.clipped.fastq.gz">30HL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_HL3_CTTGTA_L002_R1_001.trimmed.clipped.fastq.gz">W6HL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St30_HL3R_GTGAAA_L006_R1_001.trimmed.clipped.fastq.gz">30HL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W6_HL3_GTGAAA_L005_R1_001.trimmed.clipped.fastq.gz">W6HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31FLControl1_GTGAAA_L004_R1_001.trimmed.clipped.fastq.gz">31FL_L4</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_HL2_GCCAAT_L005_R1_001.trimmed.clipped.fastq.gz">W6HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31FLControl2_GTGAAA_L005_R1_001.trimmed.clipped.fastq.gz">31FL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31FLControl3_GTGAAA_L006_R1_001.trimmed.clipped.fastq.gz">31FL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St31_HL2_ACAGTG_L002_R1_001.trimmed.clipped.fastq.gz">31HL_L2</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31_Control_HL_index19_GTGAAA_L003_R1_001.trimmed.clipped.fastq.gz">31HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31_Control_HL_index2_CGATGT_L003_R1_001.trimmed.clipped.fastq.gz">31HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31_Control_HL_index7_CAGATC_L003_R1_001.trimmed.clipped.fastq.gz">31HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St31_HL1_CGATGT_L005_R1_001.trimmed.clipped.fastq.gz">31HL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St_32_HL1_CTTGTA_L004_R1_001.trimmed.clipped.fastq">32HL_L4</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St32_HL2_GTGAAA_L005_R1_001.trimmed.clipped.fastq">32HL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St32_HL3R_GTGAAA_L007_R1_001.trimmed.clipped.fastq">32HL_L7</a></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Library names follows the convention: ${stage}${limb}_${line}. For instance, mouse library of stage W2 on forward limb, sequenced on line 2 is named: W2FL_L2</p>
+</div>
+<p>Alignment</p>
+<table border="1" class="docutils">
+<caption>Reference genome and annotations</caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Mouse (Mus_musculus.GRCm38.73)</th>
+<th class="head">Opossum (Monodelphis_domestica.BROADO5.73)</th>
+<th class="head">Pig (Sus_scrofa.Sscrofa10.2.73)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-73/fasta/mus_musculus/dna/Mus_musculus.GRCm38.73.dna_sm.toplevel.fa.gz">Genome</a></td>
+<td><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-73/fasta/monodelphis_domestica/dna/Monodelphis_domestica.BROADO5.73.dna_sm.toplevel.fa.gz">Genome</a></td>
+<td><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-73/fasta/sus_scrofa/dna/Sus_scrofa.Sscrofa10.2.73.dna_sm.toplevel.fa.gz">Genome</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-73/gtf/mus_musculus/Mus_musculus.GRCm38.73.gtf.gz">Annotations</a></td>
+<td><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-73/gtf/monodelphis_domestica/Monodelphis_domestica.BROADO5.73.gtf.gz">Annotations</a></td>
+<td><a class="reference external" href="ftp://ftp.ensembl.org/pub/release-73/gtf/sus_scrofa/Sus_scrofa.Sscrofa10.2.73.gtf.gz">Annotations</a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$pathToStarDir</span>/STAR <span class="se">\</span>
+    --runMode genomeGenerate <span class="se">\</span>
+    --genomeDir <span class="nv">$path_to_genome_index_star</span> <span class="se">\</span>
+    --genomeFastaFiles <span class="nv">$path_to_genome_fa</span> <span class="se">\</span>
+    --runThreadN 8 <span class="se">\</span>
+    --sjdbGTFfile <span class="nv">$gtf</span>
+
+<span class="nb">cd</span> <span class="nv">$alignments</span>
+
+<span class="k">for </span>pathFile in <span class="k">${</span><span class="nv">reads_clean</span><span class="k">}</span>/*trimmed.clipped.fastq
+<span class="k">do</span>
+<span class="k">   </span><span class="nv">length</span><span class="o">=</span><span class="k">$((${#</span><span class="nv">reads_clean</span><span class="k">}</span><span class="o">+</span><span class="m">1</span><span class="k">))</span>
+   <span class="nv">oFile</span><span class="o">=</span><span class="k">${</span><span class="nv">pathFile</span><span class="p">:</span><span class="nv">$length</span><span class="p">:(-6)</span><span class="k">}</span>
+   <span class="nb">echo</span> <span class="nv">$oFile</span>
+
+   <span class="nv">$pathToStarDir</span>/STAR <span class="se">\</span>
+       --genomeDir <span class="nv">$path_to_index</span> <span class="se">\</span>
+       --readFilesIn <span class="nv">$pathFile</span> <span class="se">\</span>
+       --runThreadN 10 <span class="se">\</span>
+       --genomeLoad NoSharedMemory  <span class="se">\</span>
+       --outFilterScoreMin 0 <span class="se">\</span>
+       --outFilterMultimapNmax 10  <span class="se">\</span>
+       --outFilterMismatchNmax 3 <span class="se">\</span>
+       --clip3pNbases 0 <span class="se">\</span>
+       --clip5pNbases 0 <span class="se">\</span>
+       --outFileNamePrefix <span class="k">${</span><span class="nv">oFile</span><span class="k">}</span>. <span class="se">\</span>
+       --outSAMmode Full <span class="se">\</span>
+       --outSAMattributes Standard <span class="se">\</span>
+       --outSAMstrandField intronMotif <span class="se">\</span>
+       --outReadsUnmapped Fastx
+   java -jar /home/rivasas2/tools/picard-tools-1.52/SortSam.jar <span class="se">\</span>
+       <span class="nv">INPUT</span><span class="o">=</span><span class="k">${</span><span class="nv">oFile</span><span class="k">}</span>.Aligned.out.sam <span class="se">\</span>
+       <span class="nv">OUTPUT</span><span class="o">=</span><span class="k">${</span><span class="nv">oFile</span><span class="k">}</span>.sorted.sam <span class="se">\</span>
+       <span class="nv">SORT_ORDER</span><span class="o">=</span>coordinate
+<span class="k">done</span>
+<span class="c">#</span>
+<span class="nb">cd</span> <span class="nv">$base</span>:
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption>Alignment files (sam)</caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Mouse</th>
+<th class="head">Opossum</th>
+<th class="head">Pig</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_FL_1_2_CGATGT_L002_R1_001.trimmed.clipped.sorted.sam">W2FL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St28_FL3_GCCAAT_L002_R1_001.trimmed.clipped.sorted.sam">28FL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_21half_22half_FL_CGATGT_L007_R1_001.trimmed.clipped.sorted.sam">21FL_L7</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_FL3_4_ACAGTG_L003_R1_001.trimmed.clipped.sorted.sam">W2FL_L3</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St28_FL1_CGATGT_L004_R1_001.trimmed.clipped.sorted.sam">28FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_21half_22half_HL_ACAGTG_L004_R1_001.trimmed.clipped.sorted.sam">21HL_L4</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_FL_GCCAAT_L004_R1_001.trimmed.clipped.sorted.sam">W2FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St28_FL3_GCCAAT_L004_R1_001.trimmed.clipped.sorted.sam">28FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_25half_26half_FL_GCCAAT_L005_R1_001.trimmed.clipped.sorted.sam">25FL_L5</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W2_HL3R_CGATGT_L005_R1_001.trimmed.clipped.sorted.sam">W2HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St28_FL2_ACAGTG_L005_R1_001.trimmed.clipped.sorted.sam">28FL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/pig_25half_26half_HL_CTTGTA_L006_R1_001.trimmed.clipped.sorted.sam">25HL_L6</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W2_HL1_2_CTTGTA_L005_R1_001.trimmed.clipped.sorted.sam">W2HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St28_FL1_CGATGT_L006_R1_001.trimmed.clipped.sorted.sam">28FL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W3_4_FL3_GTGAAA_L002_R1_001.trimmed.clipped.sorted.sam">W3_4FL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St28_FL2_ACAGTG_L007_R1_001.trimmed.clipped.sorted.sam">28FL_L7</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W3_4_FL2R_ACAGTG_L006_R1_001.trimmed.clipped.sorted.sam">W3_4FL_L6</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St29_Control_FL_index19_GTGAAA_L001_R1_001.trimmed.clipped.sorted.sam">29FL_L1</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W3_4_HL2_GCCAAT_L003_R1_001.trimmed.clipped.sorted.sam">W3_4HL_L3</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St29_Control_FL_index2_CGATGT_L001_R1_001.trimmed.clipped.sorted.sam">29FL_L1</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W3_4_HL3R_CTTGTA_L004_R1_001.trimmed.clipped.sorted.sam">W3_4HL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St29_Control_FL_index7_CAGATC_L001_R1_001.trimmed.clipped.sorted.sam">29FL_L1</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W3_4_HL1R_GCCAAT_L007_R1_001.trimmed.clipped.sorted.sam">W3_4HL_L7</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St30FLControl1_GCCAAT_L004_R1_001.trimmed.clipped.sorted.sam">30FL_L4</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mouse_W6_FL2_CGATGT_L001_R1_001.trimmed.clipped.sorted.sam">W6FL_L1</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St30FLControl2_GCCAAT_L005_R1_001.trimmed.clipped.sorted.sam">30FL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_FL1_CGATGT_L003_R1_001.trimmed.clipped.sorted.sam">W6FL_L3</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St30FLControl3_GCCAAT_L006_R1_001.trimmed.clipped.sorted.sam">30FL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_FL3_ACAGTG_L004_R1_001.trimmed.clipped.sorted.sam">W6FL_L4</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St30_HL3_4_GTGAAA_L003_R1_001.trimmed.clipped.sorted.sam">30HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mouse_W6_HL1_GTGAAA_L001_R1_001.trimmed.clipped.sorted.sam">W6HL_L1</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St30_HL1R_CTTGTA_L005_R1_001.trimmed.clipped.sorted.sam">30HL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_HL3_CTTGTA_L002_R1_001.trimmed.clipped.sorted.sam">W6HL_L2</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St30_HL3R_GTGAAA_L006_R1_001.trimmed.clipped.sorted.sam">30HL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/mouse_W6_HL3_GTGAAA_L005_R1_001.trimmed.clipped.sorted.sam">W6HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31FLControl1_GTGAAA_L004_R1_001.trimmed.clipped.sorted.sam">31FL_L4</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/Mus_W6_HL2_GCCAAT_L005_R1_001.trimmed.clipped.sorted.sam">W6HL_L5</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31FLControl2_GTGAAA_L005_R1_001.trimmed.clipped.sorted.sam">31FL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31FLControl3_GTGAAA_L006_R1_001.trimmed.clipped.sorted.sam">31FL_L6</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St31_HL2_ACAGTG_L002_R1_001.trimmed.clipped.sorted.sam">31HL_L2</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31_Control_HL_index19_GTGAAA_L003_R1_001.trimmed.clipped.sorted.sam">31HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31_Control_HL_index2_CGATGT_L003_R1_001.trimmed.clipped.sorted.sam">31HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/St31_Control_HL_index7_CAGATC_L003_R1_001.trimmed.clipped.sorted.sam">31HL_L3</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St31_HL1_CGATGT_L005_R1_001.trimmed.clipped.sorted.sam">31HL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St_32_HL1_CTTGTA_L004_R1_001.trimmed.clipped.sorted.sam">32HL_L4</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/Mono_St32_HL2_GTGAAA_L005_R1_001.trimmed.clipped.sorted.sam">32HL_L5</a></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/opossum_St32_HL3R_GTGAAA_L007_R1_001.trimmed.clipped.sorted.sam">32HL_L7</a></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="gene-expression-and-fore-vs-hind-limbs-differences">
+<h2>Gene expression and fore vs hind limbs differences<a class="headerlink" href="#gene-expression-and-fore-vs-hind-limbs-differences" title="Permalink to this headline">¶</a></h2>
+<p>To improve the statistical inference of differential expression we used all replicates</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c">##################################################################</span>
+<span class="c"># 3. CUFFDIFF</span>
+<span class="c">#################################################################</span>
+
+<span class="c"># Between limbs comparisons at same stage</span>
+<span class="nb">cd</span> <span class="nv">$cufflinks_clean</span>
+
+<span class="k">for </span>stage in <span class="k">${</span><span class="nv">stage_all</span><span class="p">[</span><span class="nv">$species</span><span class="p">]</span><span class="k">}</span>; <span class="k">do</span>
+<span class="k">   </span><span class="nv">alignment_FL</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+   <span class="nv">alignment_HL</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+   <span class="k">for </span>file in <span class="k">${</span><span class="nv">alignments</span><span class="k">}</span>/*.sorted.sam; <span class="k">do</span>
+<span class="k">       if</span> <span class="o">[[</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="nv">$stage</span> <span class="o">&amp;&amp;</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;FL&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">           if</span> <span class="o">[</span> <span class="s2">&quot;$alignment_FL&quot;</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">               </span><span class="nv">alignment_FL</span><span class="o">=</span><span class="nv">$file</span>
+           <span class="k">else</span>
+<span class="k">               </span><span class="nv">alignment_FL</span><span class="o">=</span><span class="nv">$alignment_FL</span>,<span class="nv">$file</span>
+           <span class="k">fi</span>
+<span class="k">       elif</span> <span class="o">[[</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="nv">$stage</span> <span class="o">&amp;&amp;</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;HL&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">           if</span> <span class="o">[</span> <span class="s2">&quot;$alignment_HL&quot;</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">               </span><span class="nv">alignment_HL</span><span class="o">=</span><span class="nv">$file</span>
+           <span class="k">else</span>
+<span class="k">               </span><span class="nv">alignment_HL</span><span class="o">=</span><span class="nv">$alignment_HL</span>,<span class="nv">$file</span>
+           <span class="k">fi</span>
+<span class="k">       fi</span>
+<span class="k">   done</span>
+
+
+
+<span class="k">   </span><span class="nb">echo </span>CUFFDIFF <span class="nv">$stage</span> <span class="o">================================================</span>
+   <span class="nb">echo </span>FL files ------------------------------------------------
+   <span class="nb">echo</span> <span class="nv">$alignment_FL</span>
+   <span class="nb">echo </span>HL files -------------------------------------------------
+   <span class="nb">echo</span> <span class="nv">$alignment_HL</span>
+   cuffdiff <span class="se">\</span>
+       <span class="k">${</span><span class="nv">gtf</span><span class="k">}</span> <span class="se">\</span>
+       -p 10 --frag-len-mean 350 --frag-len-std-dev 100 <span class="se">\</span>
+       --multi-read-correct <span class="se">\</span>
+       --frag-bias-correct <span class="k">${</span><span class="nv">refGenome</span><span class="k">}</span> <span class="se">\</span>
+       -o cuffdiff.<span class="k">${</span><span class="nv">stage</span><span class="k">}</span> <span class="se">\</span>
+       -L St<span class="k">${</span><span class="nv">stage</span><span class="k">}</span>_FL,St<span class="k">${</span><span class="nv">stage</span><span class="k">}</span>_HL <span class="se">\</span>
+       <span class="nv">$alignment_FL</span> <span class="nv">$alignment_HL</span>
+<span class="k">done</span>
+<span class="nb">cd</span> <span class="nv">$base</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption>Expression and difference files</caption>
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Stage</th>
+<th class="head">Gene exp</th>
+<th class="head">Isoforms exp</th>
+<th class="head">Gene diff</th>
+<th class="head">Isoform exp</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Mouse_W2</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W2_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W2_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W2_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W2_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+<tr class="row-odd"><td>Mouse_W3_4</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W3_4_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W3_4_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W3_4_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W3_4_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+<tr class="row-even"><td>Mouse_W6</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W6_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W6_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W6_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/mouse/W6_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+<tr class="row-odd"><td>Opossum_30</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/30_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/30_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/30_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/30_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+<tr class="row-even"><td>Opossum_31</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/31_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/31_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/31_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/31_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+<tr class="row-odd"><td>Pig_22</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/22_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/22_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/22_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/22_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+<tr class="row-even"><td>Pig_26</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/26_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/26_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/26_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/pig/26_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="between-limbs-comparisons-at-diferent-stages-in-opossum">
+<h2>Between limbs comparisons at diferent stages in opossum<a class="headerlink" href="#between-limbs-comparisons-at-diferent-stages-in-opossum" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Between limbs comparisons at diferent stages</span>
+
+<span class="c">####################################################################</span>
+ Comparison: 28 FL - 31 HL
+<span class="c">####################################################################</span>
+<span class="nb">cd</span> <span class="nv">$cufflinks_clean</span>
+
+<span class="nv">alignment_FL</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="nv">alignment_HL</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="nv">alignments</span><span class="o">=</span>/data2/rivasas2/limbs/alignment_clean/opossum
+<span class="k">for </span>file in <span class="k">${</span><span class="nv">alignments</span><span class="k">}</span>/*.sorted.sam; <span class="k">do</span>
+<span class="k">   if</span> <span class="o">[[</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;28&quot;</span> <span class="o">&amp;&amp;</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;FL&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">       if</span> <span class="o">[</span> <span class="s2">&quot;$alignment_FL&quot;</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">           </span><span class="nv">alignment_FL</span><span class="o">=</span><span class="nv">$file</span>
+       <span class="k">else</span>
+<span class="k">           </span><span class="nv">alignment_FL</span><span class="o">=</span><span class="nv">$alignment_FL</span>,<span class="nv">$file</span>
+       <span class="k">fi</span>
+<span class="k">   fi</span>
+<span class="k">done</span>
+<span class="nv">alignments</span><span class="o">=</span>/data/rivasas2/limbs/alignment_clean/opossum
+<span class="k">for </span>file in <span class="k">${</span><span class="nv">alignments</span><span class="k">}</span>/*.sorted.sam; <span class="k">do</span>
+<span class="k">   if</span> <span class="o">[[</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;31&quot;</span> <span class="o">&amp;&amp;</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;HL&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">       if</span> <span class="o">[</span> <span class="s2">&quot;$alignment_HL&quot;</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">           </span><span class="nv">alignment_HL</span><span class="o">=</span><span class="nv">$file</span>
+       <span class="k">else</span>
+<span class="k">           </span><span class="nv">alignment_HL</span><span class="o">=</span><span class="nv">$alignment_HL</span>,<span class="nv">$file</span>
+       <span class="k">fi</span>
+<span class="k">   fi</span>
+<span class="k">done</span>
+
+
+<span class="nb">echo </span>CUFFDIFF <span class="nv">$stage</span> <span class="o">================================================</span>
+<span class="nb">echo </span>FL files ------------------------------------------------
+<span class="nb">echo</span> <span class="nv">$alignment_FL</span>
+<span class="nb">echo </span>HL files -------------------------------------------------
+<span class="nb">echo</span> <span class="nv">$alignment_HL</span>
+cuffdiff <span class="se">\</span>
+   <span class="k">${</span><span class="nv">gtf</span><span class="k">}</span> <span class="se">\</span>
+   -p 10 --frag-len-mean 350 --frag-len-std-dev 100 <span class="se">\</span>
+   --multi-read-correct <span class="se">\</span>
+   --frag-bias-correct <span class="k">${</span><span class="nv">refGenome</span><span class="k">}</span> <span class="se">\</span>
+   -o cuffdiff.28FL_31HL <span class="se">\</span>
+   -L St28_FL,St31_HL <span class="se">\</span>
+   <span class="nv">$alignment_FL</span> <span class="nv">$alignment_HL</span>
+
+<span class="nb">cd</span> <span class="nv">$base</span>
+
+<span class="c">#####################################################################</span>
+<span class="c"># Comparison: 29 FL - 32 HL</span>
+<span class="c">#####################################################################</span>
+
+<span class="nb">cd</span> <span class="nv">$cufflinks_clean</span>
+
+<span class="nv">alignment_FL</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="nv">alignment_HL</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="nv">alignments</span><span class="o">=</span>/data2/rivasas2/limbs/alignment_clean/opossum
+<span class="k">for </span>file in <span class="k">${</span><span class="nv">alignments</span><span class="k">}</span>/*.sorted.sam; <span class="k">do</span>
+<span class="k">   if</span> <span class="o">[[</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;29&quot;</span> <span class="o">&amp;&amp;</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;FL&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">       if</span> <span class="o">[</span> <span class="s2">&quot;$alignment_FL&quot;</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">           </span><span class="nv">alignment_FL</span><span class="o">=</span><span class="nv">$file</span>
+       <span class="k">else</span>
+<span class="k">           </span><span class="nv">alignment_FL</span><span class="o">=</span><span class="nv">$alignment_FL</span>,<span class="nv">$file</span>
+       <span class="k">fi</span>
+<span class="k">   fi</span>
+<span class="k">done</span>
+<span class="nv">alignments</span><span class="o">=</span>/data2/rivasas2/limbs/alignment_clean/opossum
+<span class="k">for </span>file in <span class="k">${</span><span class="nv">alignments</span><span class="k">}</span>/*.sorted.sam; <span class="k">do</span>
+<span class="k">   if</span> <span class="o">[[</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;32&quot;</span> <span class="o">&amp;&amp;</span> <span class="nv">$file</span> <span class="o">=</span>~ <span class="s2">&quot;HL&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">       if</span> <span class="o">[</span> <span class="s2">&quot;$alignment_HL&quot;</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">           </span><span class="nv">alignment_HL</span><span class="o">=</span><span class="nv">$file</span>
+       <span class="k">else</span>
+<span class="k">           </span><span class="nv">alignment_HL</span><span class="o">=</span><span class="nv">$alignment_HL</span>,<span class="nv">$file</span>
+       <span class="k">fi</span>
+<span class="k">   fi</span>
+<span class="k">done</span>
+
+
+<span class="nb">echo </span>CUFFDIFF <span class="nv">$stage</span> <span class="o">================================================</span>
+<span class="nb">echo </span>FL files ------------------------------------------------
+<span class="nb">echo</span> <span class="nv">$alignment_FL</span>
+<span class="nb">echo </span>HL files -------------------------------------------------
+<span class="nb">echo</span> <span class="nv">$alignment_HL</span>
+cuffdiff <span class="se">\</span>
+   <span class="k">${</span><span class="nv">gtf</span><span class="k">}</span> <span class="se">\</span>
+   -p 10 --frag-len-mean 350 --frag-len-std-dev 100 <span class="se">\</span>
+   --multi-read-correct <span class="se">\</span>
+   --frag-bias-correct <span class="k">${</span><span class="nv">refGenome</span><span class="k">}</span> <span class="se">\</span>
+   -o cuffdiff.29FL_32HL <span class="se">\</span>
+   -L St29_FL,St32_HL <span class="se">\</span>
+   <span class="nv">$alignment_FL</span> <span class="nv">$alignment_HL</span>
+
+<span class="nb">cd</span> <span class="nv">$base</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption>Expression and difference files</caption>
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Stage</th>
+<th class="head">Gene exp</th>
+<th class="head">Isoforms exp</th>
+<th class="head">Gene diff</th>
+<th class="head">Isoform exp</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Opossum_28FL_31HL</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/28FL_31HL_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/28FL_31HL_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/28FL_31HL_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/28FL_31HL_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+<tr class="row-odd"><td>Opossum_29FL_32HL</td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/29FL_32HL_genes.fpkm_tracking">genes_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/29FL_32HL_isoforms.fpkm_tracking">isoforms_FPKM</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/29FL_32HL_gene_exp.diff">gene_diff</a></td>
+<td><a class="reference external" href="https://132.239.135.28/public/limbs/files/opossum/29FL_32HL_isoform_exp.diff">isoform_diff</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="betweenSpecies.html" class="btn btn-neutral float-right" title="Between species analyzes"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="bat.html" class="btn btn-neutral" title="Bat analysis"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Marcelo Rivas-Astroza.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
