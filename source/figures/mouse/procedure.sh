@@ -7,23 +7,23 @@ specie="mouse"
 for limb in FL HL; do
 for stage in W2 W3_4 W6; do
 rep=0
-for fastq in $(ls /data/rivasas2/limbs/reads_clean/mouse/*trimmed.clipped.fastq* | grep $limb | grep $stage);do
+for fastq in $(ls /data/rivasas2/limbs/reads_clean/${specie}/*trimmed.clipped.fastq* | grep $limb | grep $stage);do
 	rep=$(($rep+1))
 	name=$(echo $fastq | awk '{n=split($0,a,"/");split(a[n],b,".trimmed");print b[1]}')
-	alias=mouse_${limb}_${stage}_${rep}
+	alias=${specie}_${limb}_${stage}_${rep}
 	
 	# Link fastq files
 	#ln -s ${fastq} .
-	fastqLink="\`fastq <https://132.239.135.28/public/limbs/files/mouse/${name}.trimmed.clipped.fastq.gz>\`_"
+	fastqLink="\`fastq <https://132.239.135.28/public/limbs/files/${specie}/${name}.trimmed.clipped.fastq.gz>\`_"
 	
 	# Link sam files
-	# ln -s /data/rivasas2/limbs/alignment_clean/mouse/${name}.trimmed.clipped.sorted.sam .
-	samLink="\`sam <https://132.239.135.28/public/limbs/files/mouse/${name}.trimmed.clipped.sorted.sam>\`_"
-	aligRate=$(grep ${name} /data/rivasas2/limbs/alignment_clean/mouse/mapped_reads.txt | awk '{print $3/$2}')
+	# ln -s /data/rivasas2/limbs/alignment_clean/${specie}/${name}.trimmed.clipped.sorted.sam .
+	samLink="\`sam <https://132.239.135.28/public/limbs/files/${specie}/${name}.trimmed.clipped.sorted.sam>\`_"
+	aligRate=$(grep ${name} /data/rivasas2/limbs/alignment_clean/${specie}/mapped_reads.txt | awk '{print $3/$2}')
 	
 	# Link cufflinks gene expression files
-	#ln -s /data2/rivasas2/limbs/cufflinks_time_series/mouse/cufflinks_${name}/genes.fpkm_tracking cufflinks_${name}.genes.fpkm_tracking
-	cufflinkLink="\`genes_fpkm <https://132.239.135.28/public/limbs/files/mouse/cufflinks_${name}.genes.fpkm_tracking>\`_"
+	#ln -s /data2/rivasas2/limbs/cufflinks_time_series/${specie}/cufflinks_${name}/genes.fpkm_tracking cufflinks_${name}.genes.fpkm_tracking
+	cufflinkLink="\`genes_fpkm <https://132.239.135.28/public/limbs/files/${specie}/cufflinks_${name}.genes.fpkm_tracking>\`_"
 
 
 	# Table summary
