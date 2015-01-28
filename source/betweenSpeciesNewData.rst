@@ -253,29 +253,91 @@ The first columns of each list are the gene ID of each species, followed by thei
 Figure 4: Distribution of standard deviation. Rows 1 and 2 correspond to fore and hind limbs, respectively. FL: fore limbs; HL: hind limbs.
 
 
-Phylogenetic analysis
-=====================
+Species-specificity of the transcriptomes across development
+------------------------------------------------------------
 
+:cite:`Ross2013` reported that morphology disparity of forelimbs among mammals (mice, opossums, horses, and pigs) decreases from ridge to bud stage, but increases again from paddle stage. This hourglass shape of the compared limb development processes may be explained at the gene expression level by the species-specificity of the genes dominating each developmental stage. Here, we hypothesized that at early limb developmental stages the transcriptome is dominated by species-specific genes, then --at the bottleneck of the hourglass-- control moves towards genes that are common to all mammals, and finally goes back to species-specific genes.
 
-:cite:`Ross2013` reported that the morphology disparity of forelimbs among mammals (mice, opossums, horses, and pigs) decreases from ridge to bud stage, but start increasing again from paddle stage. A possible gene expression explanation for this hourglass-like morphological development, is that during early stages of limb development the transcriptome is dominated by species-specific genes, then control moves towards genes that are common to all mammals, and finally goes back to species-specific genes.
-
-To test this hypothesis, for each species we computed the evolutionary age of their genes. Young genes are the ones that have evolved recently and therefore are more species-specific. Conversely, old genes have been inherited from common ancestors and therefore are common among species. We computed the evolutionary age of each gene by determining their most distant phylogenetic node among bat, pig, mouse, and opossum containing a detectable (blast hit, E-value 1e-5) homologue :cite:`Grosse2012`. Then, for each stage, :math:`s`, we calculated the transcriptome age index (TAI) as the sum of each gene age weighted by its expression :cite:`Domazet2010`: 
+To test this hypothesis, for each species we computed the evolutionary age of their genes by determining their most distant phylogenetic node among bat, pig, mouse, and opossum containing a detectable (blast hit, E-value 1e-5) homologue :cite:`Grosse2012`. In this frame, younger genes are the ones that have evolved recently and therefore are more species-specific. Conversely, old genes have been inherited from common ancestors and are common among all descendant species. The gene evolutionary age dominance of the transcriptome was then quantified for each species and stage using the transcriptome age index (TAI) :cite:`Domazet2010`, which is the sum of each gene evolutionary age weighted by its expression :cite:`Domazet2010`. For a given species at stage :math:`s`, TAI is mathematically defined as:
 
 .. math::
 
-   TAI_s = \sum_i{ a_i \left( \frac { e_{is}  }{ \sum_i e_{is} } \right) }
+   TAI_s = \sum_{i=1}^n{ ps_i \left( \frac { e_{is}  }{ \sum_{i=1}^n e_{is} } \right) }
 
-where, :math:`a_i` and :math:`e_{is}` are the age and expression value of gene :math:`i`.
+where, :math:`ps_i` and :math:`e_{is}` are the age and expression values of gene :math:`i`, and :math:`n` is the total number of genes.
 
-To analyze the level of specialization of the genome, for each specie we computed their evolution age. This procedure, called phylostratography,   
+Genes evolutionary age
+**********************
+
+To determine the gene homologs among any two species, we merged the fasta sequences of all species genes to form a single database. Then, one by one  we aligned the genome of each species against this database using an E-value of 1e-5.
+
+.. code-block:: bash
+
+   ########################################################
+   # Create Blast database with all species genes
+   ########################################################
+   
+   echo "Create database with all species genes sequences"
+   cp /data2/rivasas2/limbs/trinity/bat/St13_14_15.unique.trinity/Trinity.subset.fasta allSpecies.genes.fasta
+   cat /data2/rivasas2/limbs/trinity/bat/blast/mouse.genes.fasta >> allSpecies.genes.fasta
+   cat /data2/rivasas2/limbs/trinity/bat/blast/pig.genes.fasta >> allSpecies.genes.fasta
+   cat /data2/rivasas2/limbs/trinity/bat/blast/opossum.genes.fasta >> allSpecies.genes.fasta
+
+   makeblastdb -in allSpecies.genes.fasta -dbtype nucl
+   
+   ########################################################
+   # Blast BAT genes against other species
+   ########################################################
+
+   declare -A genes
+   genes["bat"]=/data2/rivasas2/limbs/trinity/bat/St13_14_15.unique.trinity/Trinity.subset.fasta
+   genes["mouse"]=/data2/rivasas2/limbs/trinity/bat/blast/mouse.genes.fasta
+   genes["opossum"]=/data2/rivasas2/limbs/trinity/bat/blast/opossum.genes.fasta
+   genes["pig"]=/data2/rivasas2/limbs/trinity/bat/blast/pig.genes.fasta
+   
+   for specie in bat mouse opossum pig; do
+       echo "blastn" $specie "---------------------------------------"
+       blastn \
+           -query ${genes[$specie]} \
+           -db allSpecies.genes.fasta \
+           -out ${specie}.blastn.outfmt6 \
+           -evalue 1e-5 \
+           -num_threads 10 \
+           -max_hsps 1 \
+           -outfmt 6
+   done
+
+Then, we used a python script, `phylostratum.py <https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/phylostratum.py>`_,  to find among each gene alignments the most distant node on the phylogenetic tree.
+
+.. code-block:: bash
+
+   ##########################################################################
+   # Extract most distant phylogenetic node among bat, pig, mouse and opossum
+   ##########################################################################
+   for specie in bat pig mouse opossum; do
+      echo "Finding phylogenetic nodes for " $specie
+      python phylostratum.py $specie
+   done
+
+
+The results, plotted in Figure 5 (left), show that bat, pig, mouse, and opossum have 4k, 11k, 21k, and 15k genes that are species-specific (they don't have and homologue in any other species). Therefore, they were assigned to phylostratum (*ps*) 1. On the other end, the number of genes that are common among all four species (*ps* 4) ranges from 6,902 (pig) to 11,296 (bat). Between these youngest and oldest genes there are *ps* 2 and *ps* 3 corresponding to the branching points of the phylogenetic tree. To test if the asignment of homologue genes between any two species was coherent with the expected phylogeny, we did a hierachichal clustering based on the pair-wise number of homologue genes. The results, Figure 5 (right), show that the clustering mirrors exactly the phylogeny of this species. Thus, supporting the method to call homologue genes.  
+
+Since *ps* 4 comprehend a set of further evolutionary ages 
 
 .. _Figure 5:
 
-.. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/orthology_heatmap.svg
-   :width: 45 % 
 .. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/phylogenetic_tree.svg
    :width: 45 % 
-Figure 5: 
+.. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/orthology_heatmap.svg
+   :width: 45 % 
+Figure 5: Phylogenetic tree and clustering of species bases of number of pair-wise orthologs genes. **On the left**, the phylogenetic tree of bat, pig, mouse, and opossum. For each of the four phylogenetic strata (*ps* 1, *ps* 2, *ps* 3, and *ps* 4) the number of genes assigned to it are presented in a color-coded manner. At each branch of the tree are presented, in black, the estimated time of departure of any two species :cite:`Hedges2009`. **On the right**, the hierarchical clustering of species based on the number of pair-wise homologue genes. The number of homologue genes of species `j` (columns) found on species :math:`i` (rows) was normalized by the total number of genes on species :math:`j`.
+
+Once obtained the evolutionary age for each gene on each species, we computed the :math:`TAI_s` for each species across ridge, bud, and paddle stages. The results, Figure 6, show that on fore-limbs pig and bat genomes :math:`TAI_s` are coherent with our hypothesis. On both species, the ridge and paddle stages are dominated by young genes whereas the intermediate budge stage is dominated by old genes. Opossum, on the other hand had the opposite trend. Bat show a path unlike the previous ones. In this case, it genome tend to be further dominated by young genes across developmental stages. 
+
+Since opossum, mouse, and pig were all reported to have limb developmental process whose morphological divergences resemble a hourglass shape, we expected to observe a similar trend among the three of them. To understand opossum discrepancy, we determined the statistical significant of each species :math:`TAI_s` trend, using the procedure proposed by :cite:`Quint2012`, where the variance of :math:`TAI_s` across stages (ridge, budge, and paddle), :math:`VTAI`, is use as test statistic. The null distribution is obtained by sampling 1000 surrogates of :math:`VTAI`. Each surrogates being generated by permuting the *ps* assignations. The null distribution was modeled as a gamma distribution, and it parameters estimated using the `MASS <http://cran.r-project.org/web/packages/MASS/index.html>`_ library in `R <http://www.r-project.org/>`_ (R scripts for p-value computations on `hindlimbs <https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/analysis.FLgeneAge.R>`_ and `hindlimbs <https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/analysis.HLgeneAge.R>`_).
+
+
+The statistical results, Figure 7 first row, show that mouse and pig :math:`TAI_s` trends are highly significant (p-values: 1.36e-4 and 3.12e-4), whereas opossum is not (p-value 0.256). Interestingly, we found that bat's results are also statistically significat (p-value 1.11e-4). 
 
 .. _Figure 6:
 
@@ -286,15 +348,19 @@ Figure 6: TAI values for fore and hind limbs.
 .. _Figure 7:
 
 .. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/bat_vtai.FL.svg
-   :width: 30 % 
+   :width: 23 % 
 .. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/pig_vtai.FL.svg
-   :width: 30 % 
+   :width: 23 % 
 .. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/mouse_vtai.FL.svg
-   :width: 30 % 
+   :width: 23 % 
+.. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/opossum_vtai.FL.svg
+   :width: 23 % 
 .. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/bat_vtai.HL.svg
-   :width: 30 % 
+   :width: 23 % 
 .. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/pig_vtai.HL.svg
-   :width: 30 % 
+   :width: 23 % 
 .. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/mouse_vtai.HL.svg
-   :width: 30 % 
+   :width: 23 % 
+.. image:: https://132.239.135.28/public/limbs/files/betweenSpeciesNewData/opossum_vtai.HL.svg
+   :width: 23 % 
 Figure 7: Fore and Hind limbs distribution of VTAI.

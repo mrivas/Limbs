@@ -49,9 +49,15 @@
 #for file in /data2/rivasas2/limbs/phylostratum/FL/*svg; do
 #	ln -s $file .
 #done
-## Phylography TAI figures hind limbs
+ln -s /data2/rivasas2/limbs/phylostratum/HL/*R .
+# Phylography TAI figures hind limbs
 #for file in /data2/rivasas2/limbs/phylostratum/HL/*svg; do
 #	ln -s $file .
 #done
-ln -s /data2/rivasas2/limbs/docs/source/figures/betweenSpeciesNewData/tai.FL-HL.svg . 
-ln -s /data2/rivasas2/limbs/docs/source/figures/betweenSpeciesNewData/phylogenetic_tree.svg . 
+ln -s /data2/rivasas2/limbs/phylostratum/FL/*R .
+#ln -s /data2/rivasas2/limbs/docs/source/figures/betweenSpeciesNewData/tai.FL-HL.svg . 
+#ln -s /data2/rivasas2/limbs/docs/source/figures/betweenSpeciesNewData/phylogenetic_tree.svg . 
+
+#ln -s /data2/rivasas2/limbs/phylostratum/phylostratum.py .
+
+
