@@ -1,10 +1,10 @@
 declare -A sname
 sname["D20"]=20
 sname["22_5"]=22
-sname["24"]=26
 sname["21half"]=22
+sname["24"]=26
 sname["25half"]=26
-
+dummy_stage="none"
 specie=pig
 echo "Pig" > ${specie}_results.table.rst
 echo "===" >> ${specie}_results.table.rst
@@ -13,9 +13,12 @@ echo ".. csv-table:: Pig: Summary of data and gene expression results." >> ${spe
 echo "   :header: Library,Alias,Reads,Alignment,Alig rate,Genes expression,Isoforms expression" >> ${specie}_results.table.rst
 echo "   " >> ${specie}_results.table.rst
 for limb in FL HL; do
-for stage in D20 22_5 24 21half 25half; do
+for stage in D20 22_5 21half 24 25half; do
 stageName=${sname[$stage]}
-rep=0
+if [[ "$stageName" != "$dummy_stage" ]]; then
+	rep=0
+	dummy_stage=$stageName
+fi
 for fastq in $(ls /data/rivasas2/limbs/reads_clean/${specie}/*trimmed.clipped.fastq* | grep $limb | grep $stage) \
              $(ls /data2/rivasas2/limbs/reads_clean/new_2014/${specie}/*trimmed.clipped.fastq* | grep $limb | grep $stage);do
     rep=$(($rep+1))

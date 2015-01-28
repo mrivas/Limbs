@@ -1,3 +1,5 @@
+.. _mousePigOpossum:
+
 Mouse, pig, and opossum analyzes
 ================================
 

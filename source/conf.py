@@ -31,13 +31,16 @@ import sphinx_rtd_theme
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-	'sphinx.ext.pngmath',
+    'sphinxarg.ext',
+    'sphinx.ext.mathjax',
+    'sphinxcontrib.programoutput',
+    'sphinx.ext.numfig',
+    'sphinxcontrib.bibtex'
 ]
-#]
-#'sphinx.ext.mathjax'
-#'matplotlib.sphinxext.mathmpl',
-#]
-
+# numfig:
+# numfig_number_figures = True
+# numfig_figure_caption_prefix = "Figure"
+mathjax_path="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
