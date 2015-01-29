@@ -131,7 +131,8 @@ The cleaned libraries, alignments, and expression values are presented in the fo
 
 .. note::
 
-   Library names follows the convention: species_stage_limb_replicate. For instance, mouse library of stage W2, forward limb, on the first replicate is  named: mouse_W2_FL_1.
+   Library names follows the convention: species_stage_limb_replicate. For instance, mouse library of stage W2, forward limb, on the first replicate is  named: mouse_W2_FL_1. Please see the following links for details about the gene/isoforms: `expression format <http://cole-trapnell-lab.github.io/cufflinks/file_formats/#fpkm-tracking-format>`_
+
 
 
 Gene expression analyses
@@ -287,10 +288,17 @@ Since in opossum fore and hind limbs have similar morphology development at diff
 Results of differential gene expression analyses
 ------------------------------------------------
 
-Results per specie in the following links.
+Results per specie can be found in the following links.
 
 .. toctree::
 
    mouse_cuffdiff.table
    opossum_cuffdiff.table
    pig_cuffdiff.table
+
+
+Please see the following links for details about the gene/isoforms:
+
+  * `expression format <http://cole-trapnell-lab.github.io/cufflinks/file_formats/#fpkm-tracking-format>`_, and
+  * `differential expression format <http://cole-trapnell-lab.github.io/cufflinks/cuffdiff/index.html#differential-expression-tests>`_
+
